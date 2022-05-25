@@ -1,6 +1,10 @@
-# NodeJS + Express + Sequelize (Mysql)
+# Mini Inventory API
 
-## Basic install
+Aplikasi mini inventory dan POS sistem. Untuk mengatur 
+
+## NodeJS + Express + Sequelize (Mysql)
+
+### Basic install
 
 - Steps to start
   - Inside the root directory run:

@@ -200,8 +200,12 @@ module.exports = {
         
         order.totalIncome = 0
 
-        order.OrderItems.forEach(orderItem => {
+        order.OrderItems.forEach(async orderItem => {
           order.totalIncome += orderItem.subtotalIncome
+          
+          orderItem.Product.stock -= orderItem.quantity
+
+          await orderItem.Product.save({ transaction })
         })
         
         const confirmedOrder = await order.save({ transaction })

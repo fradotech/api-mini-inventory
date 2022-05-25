@@ -7,6 +7,10 @@ module.exports = {
         type: DataTypes.INTEGER,
         primaryKey: true,
       },
+      quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       subtotal_grocery_price: {
         type: DataTypes.INTEGER,
         allowNull: false,
