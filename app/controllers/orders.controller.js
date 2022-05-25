@@ -8,14 +8,28 @@ module.exports = {
 
   products: async (req, res, next) => {
     try {
-      // Start Transaction
-      const result = await models.sequelize.transaction(async (transaction) => {
-        const products = await models.Product.findAll({ transaction })
-        return products
-      })
-      // Transaction complete!
-      res.status(200).send(response.getResponseCustom(200, result))
-      res.end()
+      // client.del('products')
+      const productsCache = await client.get('products')
+
+      if(productsCache) {
+        console.log('Cache Product List')
+        res.status(200).send(response.getResponseCustom(200, JSON.parse(productsCache)))
+      }
+
+      else {
+        // Start Transaction
+        const result = await models.sequelize.transaction(async (transaction) => {
+          const products = await models.Product.findAll({ transaction })
+          await client.set('products', JSON.stringify(products))
+
+          return products
+        })
+        
+        // Transaction complete!
+        res.status(200).send(response.getResponseCustom(200, result))
+        res.end()
+      }
+
     } catch (error) {
       // Transaction Failed!
       next(error)
@@ -24,6 +38,8 @@ module.exports = {
 
   create: async (req, res, next) => {
     try {
+      client.del('orders') // Remove cache
+      
       // Start Transaction
       const result = await models.sequelize.transaction(async (transaction) => {
         if (!req.body.customerName) req.body.customerName = 'Anonymous'
@@ -52,6 +68,9 @@ module.exports = {
 
   addProducts: async (req, res, next) => {
     try {
+      client.del('orders') // Remove cache
+      client.del(`order[${req.params.id}]`) // Remove cache
+      
       // Start Transaction
       const result = await models.sequelize.transaction(async (transaction) => {
         const order = (await models.Order.findByPk(req.params.id, { transaction }))
@@ -87,29 +106,34 @@ module.exports = {
 
   read: async (req, res, next) => {
     try {
-      // Start Transaction
-      const result = await models.sequelize.transaction(async (transaction) => {
-        const orders = await models.Order.findAll({ 
-          include: {
-            model: models.OrderItem,
+      const ordersCache = await client.get('orders')
+
+      if(ordersCache) {
+        console.log('Cache Order List')
+        res.status(200).send(response.getResponseCustom(200, JSON.parse(ordersCache)))
+      }
+
+      else {
+        // Start Transaction
+        const result = await models.sequelize.transaction(async (transaction) => {
+          const orders = await models.Order.findAll({ 
             include: {
-              model: models.Product,
+              model: models.OrderItem,
+              include: {
+                model: models.Product,
+              }, 
             }, 
-          }, 
-          transaction 
+            transaction 
+          })
+          
+          await client.set('orders', JSON.stringify(orders))
+
+          return orders
         })
-
-        // client.on
-        // const ordersCache = await client.get('orders', orders)
-        // if(ordersCache) return ordersCache
-
-        // ordersCache = await client.set('orders', orders)
-
-        return orders
-      })
-      // Transaction complete!
-      res.status(200).send(response.getResponseCustom(200, result))
-      res.end()
+        // Transaction complete!
+        res.status(200).send(response.getResponseCustom(200, result))
+        res.end()
+      }
     } catch (error) {
       // Transaction Failed!
       next(error)
@@ -118,25 +142,36 @@ module.exports = {
 
   readOne: async (req, res, next) => {
     try {
-      // Start Transaction
-      const result = await models.sequelize.transaction(async (transaction) => {
-        const order = await models.Order.findByPk(req.params.id, { 
-          include: {
-            model: models.OrderItem,
+      const orderCache = await client.get(`order[${req.params.id}]`)
+
+      if(orderCache) {
+        console.log('Cache Product List')
+        res.status(200).send(response.getResponseCustom(200, JSON.parse(orderCache)))
+      }
+
+      else {
+       // Start Transaction
+        const result = await models.sequelize.transaction(async (transaction) => {
+          const order = await models.Order.findByPk(req.params.id, { 
             include: {
-              model: models.Product,
+              model: models.OrderItem,
+              include: {
+                model: models.Product,
+              }, 
             }, 
-          }, 
-          transaction 
+            transaction 
+          })
+
+          if (!order) throw new CustomError('Order not found', 404)
+          
+          await client.set(`order[${order.id}]`, JSON.stringify(order))
+          
+          return order
         })
-        
-        if (!order) throw new CustomError('Order not found', 404)
-        
-        return order
-      })
-      // Transaction complete!
-      res.status(200).send(response.getResponseCustom(200, result))
-      res.end()
+        // Transaction complete!
+        res.status(200).send(response.getResponseCustom(200, result))
+        res.end() 
+      }
     } catch (error) {
       // Transaction Failed!
       next(error)
@@ -145,6 +180,9 @@ module.exports = {
 
   confirm: async (req, res, next) => {
     try {
+      client.del('orders') // Remove cache
+      client.del(`order[${req.params.id}]`) // Remove cache
+      
       // Start Transaction
       const result = await models.sequelize.transaction(async (transaction) => {
         const order = await models.Order.findByPk(req.params.id, { 
@@ -181,6 +219,9 @@ module.exports = {
 
   checkOut: async (req, res, next) => {
     try {
+      client.del('orders') // Remove cache
+      client.del(`order[${req.params.id}]`) // Remove cache
+
       // Start Transaction
       const result = await models.sequelize.transaction(async (transaction) => {
         const order = await models.Order.findByPk(req.params.id, { 
@@ -210,6 +251,9 @@ module.exports = {
 
   delete: async (req, res, next) => {
     try {
+      client.del('orders') // Remove cache
+      client.del(`order[${req.params.id}]`) // Remove cache
+
       // Start Transaction
       const result = await models.sequelize.transaction(async (transaction) => {
         const order = await models.Order.findByPk(req.params.id, { 
