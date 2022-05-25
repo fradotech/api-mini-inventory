@@ -9,6 +9,9 @@ Flow sederhana dari aplikasi ini adalah sistem POS sebagai berikut:
 3. Konfirmasi order dan program ini akan menampilkan keuntungan yang di dapat berdasarkan 
    harga jual dikurangi harga grosirnya
 
+## Deploy Heroku
+https://mini-inventory.herokuapp.com
+
 ## Project
 
 Project ini menggunakan framework ExpressJs karena aplikasinya sederhana dan ExpressJs
@@ -74,10 +77,8 @@ lancaar, malah saja dapat ilmu baru ternyata sangat berguna dan mudah penggunaan
 
 # Dokumentasi
 
-### Skema Database
-[https://dbdiagram.io/d/628c8999f040f104c184d8d3]
-(https://dbdiagram.io/d/628c8999f040f104c184d8d3)
+#### Skema Database
+https://dbdiagram.io/d/628c8999f040f104c184d8d3
 
-### Dokumentasi (Postman)
-[https://documenter.getpostman.com/view/21031688/Uz59NeXi]
-(https://documenter.getpostman.com/view/21031688/Uz59NeXi)
+#### Dokumentasi (Postman)
+https://documenter.getpostman.com/view/21031688/Uz59NeXi
