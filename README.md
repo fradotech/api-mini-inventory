@@ -1,6 +1,6 @@
 # Mini Inventory API
 
-Aplikasi mini inventory dan POS sistem. Untuk manajemen penjualan.
+Aplikasi mini inventory dan POS sistem untuk manajemen penjualan.
 Flow sederhana dari aplikasi ini adalah sistem POS sebagai berikut:
 
 1. Menampilkan produk yang ingin dibeli (sudah ada seeder dengan manajemen stock produk
@@ -51,7 +51,7 @@ lancaar, malah saja dapat ilmu baru ternyata sangat berguna dan mudah penggunaan
     ```
       npm i
     ```
-3. Buat database MySQnya dulu dalam localhost dengan nama "mini_inventory" (kalau sesuai .env)
+3. Buat database MySQLnya dulu dalam localhost dengan nama "mini_inventory" (kalau sesuai .env)
 
 4. Jalankan migrasi dan isi seedersnya
     ```

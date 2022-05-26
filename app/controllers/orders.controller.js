@@ -145,7 +145,7 @@ module.exports = {
       const orderCache = await client.get(`order[${req.params.id}]`)
 
       if(orderCache) {
-        console.log('Cache Product List')
+        console.log('Cache Order')
         res.status(200).send(response.getResponseCustom(200, JSON.parse(orderCache)))
       }
 
